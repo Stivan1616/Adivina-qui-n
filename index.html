@@ -12,6 +12,14 @@
 
     <h1>Adivina Quién</h1>
 
+    <!-- Music Player -->
+    <audio id="bgMusic" loop>
+        <source src="Audios/Littleroot Town Pokémon Omega Ruby Alpha Sapphire Music Extended HD.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="btnMusicToggle" title="Activar/Desactivar Música">🔇</button>
+
     <div class="controls-container">
         <label for="seedInput">Seed:</label>
         <input type="text" id="seedInput" placeholder="Enter Seed">
@@ -19,6 +27,7 @@
         <button id="btnRandom">Aleatorio</button>
         <span id="currentSeedDisplay"></span>
         <button id="btnCopy" title="Copiar Seed">📋</button>
+        <button id="btnUndo" title="Deshacer último movimiento">↩️</button>
     </div>
 
     <div class="game-container">

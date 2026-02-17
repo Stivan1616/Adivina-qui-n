@@ -4,11 +4,19 @@ const btnLoad = document.getElementById("btnLoad");
 const btnRandom = document.getElementById("btnRandom");
 const currentSeedDisplay = document.getElementById("currentSeedDisplay");
 const btnCopy = document.getElementById("btnCopy");
+const btnUndo = document.getElementById("btnUndo");
 const selectedPokemonCard = document.getElementById("selectedPokemonCard");
+const bgMusic = document.getElementById("bgMusic");
+const btnMusicToggle = document.getElementById("btnMusicToggle");
 
 let allPokemonNames = [];
 let currentSeed = null;
 let gameState = "SELECTING"; // 'SELECTING' | 'PLAYING'
+let moveHistory = [];
+let isMusicPlaying = false;
+
+// Initialize Audio Volume
+bgMusic.volume = 0.1; // 10% volume as requested ("no suene tan fuerte")
 
 // Seeded Random Generator (Mulberry32)
 function mulberry32(a) {
@@ -42,6 +50,7 @@ function initGame(seed) {
 
     // Reset Game State
     gameState = "SELECTING";
+    moveHistory = []; // Clear history
     selectedPokemonCard.innerHTML = '<div class="placeholder-text">?</div>';
     selectedPokemonCard.className = "card placeholder-card";
 
@@ -88,6 +97,19 @@ function renderGrid(pokemons) {
             if (gameState === "SELECTING") {
                 selectPokemon(name);
             } else {
+                // Track move for undo
+                if (!card.classList.contains("defeated")) {
+                    moveHistory.push(card);
+                } else {
+                    // If we are "undefeating" manually, should we track it? 
+                    // Usually undo is for "I accidentally defeated this".
+                    // Let's track all toggles or just defeats?
+                    // User said "descarte mal", so usually they want to UNDO a defeat.
+                    // If I click a defeated card to undefeat it, that's a manual correction.
+                    // If I click a normal card to defeat it, that's a move.
+                    // Let's just track the card element. simpler.
+                    moveHistory.push(card);
+                }
                 card.classList.toggle("defeated");
             }
         });
@@ -115,7 +137,16 @@ function selectPokemon(name) {
     selectedPokemonCard.appendChild(label);
 }
 
+function undoLastMove() {
+    if (moveHistory.length > 0) {
+        const lastCard = moveHistory.pop();
+        lastCard.classList.toggle("defeated");
+    }
+}
+
 // Event Listeners
+btnUndo.addEventListener('click', undoLastMove);
+
 btnLoad.addEventListener('click', () => {
     const seed = parseInt(seedInput.value);
     if (!isNaN(seed)) {
@@ -139,5 +170,32 @@ btnCopy.addEventListener('click', () => {
     }
 });
 
+btnMusicToggle.addEventListener('click', () => {
+    if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+            btnMusicToggle.textContent = "🔊";
+            btnMusicToggle.style.background = "rgba(46, 204, 113, 0.8)"; // Green tint for active
+            isMusicPlaying = true;
+        }).catch(error => {
+            console.error("Audio play failed:", error);
+        });
+    } else {
+        bgMusic.pause();
+        btnMusicToggle.textContent = "🔇";
+        btnMusicToggle.style.background = ""; // Reset background
+        isMusicPlaying = false;
+    }
+});
+
 // Start
 fetchPokemonData();
+
+// Attempt to Autoplay Music
+bgMusic.play().then(() => {
+    isMusicPlaying = true;
+    btnMusicToggle.textContent = "🔊";
+    btnMusicToggle.style.background = "rgba(46, 204, 113, 0.8)";
+}).catch(error => {
+    console.log("Autoplay blocked by browser policy. Interaction required.", error);
+    // UI remains in "muted" state, user must click to play.
+});
