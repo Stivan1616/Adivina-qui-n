@@ -51,7 +51,7 @@ function initGame(seed) {
     // Reset Game State
     gameState = "SELECTING";
     moveHistory = []; // Clear history
-    selectedPokemonCard.innerHTML = '<div class="placeholder-text">?</div>';
+    selectedPokemonCard.innerHTML = '<div class="placeholder-text"><i class="ri-question-mark"></i></div>';
     selectedPokemonCard.className = "card placeholder-card";
 
     // Setup RNG
@@ -163,39 +163,86 @@ btnRandom.addEventListener('click', () => {
 btnCopy.addEventListener('click', () => {
     if (currentSeed !== null) {
         navigator.clipboard.writeText(currentSeed).then(() => {
-            const originalText = btnCopy.textContent;
-            btnCopy.textContent = "✅";
-            setTimeout(() => btnCopy.textContent = originalText, 1500);
+            const icon = btnCopy.querySelector('i');
+            const originalClass = icon.className;
+
+            // Change to Check Icon
+            icon.className = "ri-check-line";
+            btnCopy.style.color = "#4caf50"; // Green color
+
+            setTimeout(() => {
+                icon.className = originalClass;
+                btnCopy.style.color = ""; // Reset color
+            }, 1500);
         });
     }
 });
 
-btnMusicToggle.addEventListener('click', () => {
+/* --- Music Player Logic --- */
+const playlist = [
+    "Audios/Littleroot Town Pokémon Omega Ruby Alpha Sapphire Music Extended HD.mp3",
+    "Audios/furret walk full song 1 hora.mp3",
+    "Audios/Que juego hizo Willyrex REMIX Dalas ft.Delox Christian Relikia.mp3",
+    "Audios/QUÉ JUEGO HIZO WILLYREX 🗣️🗣️ Remix VERSION METAL🤘🏼 Shivita remix willyrex humor music.mp3"
+];
+let currentSongIndex = 0;
+const volumeSlider = document.getElementById("volumeSlider");
+const btnNextSong = document.getElementById("btnNextSong");
+
+// Load initial song without playing yet (autoplay handles play)
+bgMusic.src = playlist[currentSongIndex];
+
+function toggleMusic() {
     if (bgMusic.paused) {
-        bgMusic.play().then(() => {
-            btnMusicToggle.textContent = "🔊";
-            btnMusicToggle.style.background = "rgba(46, 204, 113, 0.8)"; // Green tint for active
-            isMusicPlaying = true;
-        }).catch(error => {
-            console.error("Audio play failed:", error);
-        });
+        playMusic();
     } else {
-        bgMusic.pause();
-        btnMusicToggle.textContent = "🔇";
-        btnMusicToggle.style.background = ""; // Reset background
-        isMusicPlaying = false;
+        pauseMusic();
     }
+}
+
+function playMusic() {
+    bgMusic.play().then(() => {
+        // Change icon to volume up
+        btnMusicToggle.innerHTML = '<i class="ri-volume-up-fill"></i>';
+        isMusicPlaying = true;
+    }).catch(error => {
+        console.error("Audio play failed:", error);
+    });
+}
+
+function pauseMusic() {
+    bgMusic.pause();
+    // Change icon to volume mute
+    btnMusicToggle.innerHTML = '<i class="ri-volume-mute-fill"></i>';
+    isMusicPlaying = false;
+}
+
+function playNextSong() {
+    currentSongIndex = (currentSongIndex + 1) % playlist.length;
+    bgMusic.src = playlist[currentSongIndex];
+    if (isMusicPlaying) {
+        playMusic();
+    } else {
+        // If it was paused, load next but stay paused? 
+        // Typically "Next" implies "Play Next".
+        playMusic();
+    }
+}
+
+// Controls Events
+btnMusicToggle.addEventListener('click', toggleMusic);
+
+volumeSlider.addEventListener('input', (e) => {
+    bgMusic.volume = e.target.value;
 });
 
-// Start
+btnNextSong.addEventListener('click', playNextSong);
+
+// Auto-play next song when ended
+bgMusic.addEventListener('ended', playNextSong);
+
+// Initial Autoplay
+playMusic();
+
+// Start Game Data
 fetchPokemonData();
-
-// Attempt to Autoplay Music
-bgMusic.play().then(() => {
-    isMusicPlaying = true;
-    btnMusicToggle.textContent = "🔊";
-    btnMusicToggle.style.background = "rgba(46, 204, 113, 0.8)";
-}).catch(error => {
-    console.log("Autoplay blocked by browser policy. Interaction required.", error);
-    // UI remains in "muted" state, user must click to play.
-});

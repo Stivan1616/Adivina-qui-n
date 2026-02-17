@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adivina Quién - Pokémon</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,34 +14,44 @@
     <h1>Adivina Quién</h1>
 
     <!-- Music Player -->
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic">
         <source src="Audios/Littleroot Town Pokémon Omega Ruby Alpha Sapphire Music Extended HD.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
-    <button id="btnMusicToggle" title="Activar/Desactivar Música">🔇</button>
+    <div class="music-controls">
+        <button id="btnMusicToggle" title="Activar/Desactivar Música"><i class="ri-volume-mute-fill"></i></button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.1" title="Volumen">
+        <button id="btnNextSong" title="Siguiente Canción"><i class="ri-skip-forward-fill"></i></button>
+    </div>
 
     <div class="controls-container">
         <label for="seedInput">Seed:</label>
         <input type="text" id="seedInput" placeholder="Enter Seed">
-        <button id="btnLoad">Cargar</button>
-        <button id="btnRandom">Aleatorio</button>
+        <button id="btnLoad" class="btn-primary">CARGAR</button>
+        <button id="btnRandom" class="btn-primary">ALEATORIO</button>
         <span id="currentSeedDisplay"></span>
-        <button id="btnCopy" title="Copiar Seed">📋</button>
-        <button id="btnUndo" title="Deshacer último movimiento">↩️</button>
+        <button id="btnCopy" class="btn-icon" title="Copiar Seed"><i class="ri-clipboard-line"></i></button>
+        <button id="btnUndo" class="btn-icon" title="Deshacer último movimiento"><i
+                class="ri-arrow-go-back-line"></i></button>
     </div>
 
     <div class="game-container">
         <aside class="sidebar">
             <h2>Tu Pokémon</h2>
             <div id="selectedPokemonCard" class="card placeholder-card">
-                <div class="placeholder-text">?</div>
+                <div class="placeholder-text"><i class="ri-question-mark"></i></div>
             </div>
         </aside>
         <div class="grid" id="pokemonGrid">
             <!-- Las cartas se generarán aquí mediante JS -->
         </div>
     </div>
+
+    <a href="https://stivan1616.github.io/Pokemon-Mini-Games-try-2/" target="_blank" id="btnExternalGame"
+        class="btn-primary" title="Ir al otro juego">
+        <i class="ri-gamepad-line"></i> Juega Pokemon Types Game
+    </a>
 
     <script src="script.js"></script>
 </body>

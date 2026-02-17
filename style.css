@@ -36,49 +36,97 @@ h1 {
 }
 
 .controls-container {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
-    background: #2c2c2c;
-    padding: 10px;
-    border-radius: 8px;
+    background: transparent;
+    /* Cleaner look */
+    padding: 0;
 }
 
 .controls-container input {
-    background: #444;
-    border: 1px solid #555;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 5px;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
 }
 
-.controls-container button {
+.controls-container input:focus {
+    border-color: var(--accent-color);
+}
+
+/* Primary Button Style */
+.btn-primary {
     background: var(--accent-color);
     border: none;
     color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.controls-container button:hover {
-    opacity: 0.9;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 82, 82, 0.3);
+    background: #ff6b6b;
 }
 
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Icon Button Style */
+.btn-icon {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Specific overwrite for undo */
 #btnUndo {
-    background: #ff9800;
-    /* Orange for undo */
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+    border-color: rgba(255, 152, 0, 0.3);
 }
 
 #btnUndo:hover {
-    background: #e68900;
+    background: #ff9800;
+    color: white;
 }
 
 #currentSeedDisplay {
-    font-family: monospace;
-    font-size: 1.1rem;
-    color: #ffd700;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
     margin: 0 5px;
 }
 
@@ -255,32 +303,95 @@ h1 {
     }
 }
 
-/* Music Toggle Button */
-#btnMusicToggle {
+/* Music Controls Container */
+.music-controls {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(30, 30, 30, 0.8);
-    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background: rgba(30, 30, 30, 0.85);
+    padding: 15px 10px;
+    border-radius: 30px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s;
+}
+
+.music-controls:hover {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Button Reset within Controls */
+.music-controls button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    transition: transform 0.2s, color 0.2s, background 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    width: 40px;
+    height: 40px;
+    box-shadow: none;
 }
 
-#btnMusicToggle:hover {
-    background: rgba(255, 82, 82, 0.9);
-    /* Accent color */
+.music-controls button:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-    border-color: rgba(255, 255, 255, 0.6);
+    color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Slider Style */
+.music-controls input[type=range] {
+    width: 5px;
+    height: 80px;
+    /* Vertical slider */
+    appearance: slider-vertical;
+    /* Standard vertical slider */
+    cursor: pointer;
+    accent-color: var(--accent-color);
+    margin: 5px 0;
+}
+
+/* Fallback for browsers that don't support appearance: slider-vertical */
+.music-controls input[type=range] {
+    writing-mode: bt-lr;
+    /* IE */
+    -webkit-appearance: slider-vertical;
+    /* WebKit */
+    width: 8px;
+    height: 80px;
+    padding: 0 5px;
+}
+
+/* External Game Button */
+#btnExternalGame {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(44, 44, 44, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+#btnExternalGame:hover {
+    background: var(--accent-color);
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
