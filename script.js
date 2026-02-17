@@ -4,11 +4,13 @@ const btnLoad = document.getElementById("btnLoad");
 const btnRandom = document.getElementById("btnRandom");
 const currentSeedDisplay = document.getElementById("currentSeedDisplay");
 const btnCopy = document.getElementById("btnCopy");
+const btnUndo = document.getElementById("btnUndo");
 const selectedPokemonCard = document.getElementById("selectedPokemonCard");
 
 let allPokemonNames = [];
 let currentSeed = null;
 let gameState = "SELECTING"; // 'SELECTING' | 'PLAYING'
+let moveHistory = [];
 
 // Seeded Random Generator (Mulberry32)
 function mulberry32(a) {
@@ -42,6 +44,7 @@ function initGame(seed) {
 
     // Reset Game State
     gameState = "SELECTING";
+    moveHistory = []; // Clear history
     selectedPokemonCard.innerHTML = '<div class="placeholder-text">?</div>';
     selectedPokemonCard.className = "card placeholder-card";
 
@@ -88,6 +91,19 @@ function renderGrid(pokemons) {
             if (gameState === "SELECTING") {
                 selectPokemon(name);
             } else {
+                // Track move for undo
+                if (!card.classList.contains("defeated")) {
+                    moveHistory.push(card);
+                } else {
+                    // If we are "undefeating" manually, should we track it? 
+                    // Usually undo is for "I accidentally defeated this".
+                    // Let's track all toggles or just defeats?
+                    // User said "descarte mal", so usually they want to UNDO a defeat.
+                    // If I click a defeated card to undefeat it, that's a manual correction.
+                    // If I click a normal card to defeat it, that's a move.
+                    // Let's just track the card element. simpler.
+                    moveHistory.push(card);
+                }
                 card.classList.toggle("defeated");
             }
         });
@@ -115,7 +131,16 @@ function selectPokemon(name) {
     selectedPokemonCard.appendChild(label);
 }
 
+function undoLastMove() {
+    if (moveHistory.length > 0) {
+        const lastCard = moveHistory.pop();
+        lastCard.classList.toggle("defeated");
+    }
+}
+
 // Event Listeners
+btnUndo.addEventListener('click', undoLastMove);
+
 btnLoad.addEventListener('click', () => {
     const seed = parseInt(seedInput.value);
     if (!isNaN(seed)) {
