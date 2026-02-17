@@ -12,6 +12,18 @@
 
     <h1>Adivina Quién</h1>
 
+    <!-- Music Player -->
+    <audio id="bgMusic">
+        <source src="Audios/Littleroot Town Pokémon Omega Ruby Alpha Sapphire Music Extended HD.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="music-controls">
+        <button id="btnMusicToggle" title="Activar/Desactivar Música">🔇</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.1" title="Volumen">
+        <button id="btnNextSong" title="Siguiente Canción">⏭️</button>
+    </div>
+
     <div class="controls-container">
         <label for="seedInput">Seed:</label>
         <input type="text" id="seedInput" placeholder="Enter Seed">

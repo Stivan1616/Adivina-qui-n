@@ -6,11 +6,17 @@ const currentSeedDisplay = document.getElementById("currentSeedDisplay");
 const btnCopy = document.getElementById("btnCopy");
 const btnUndo = document.getElementById("btnUndo");
 const selectedPokemonCard = document.getElementById("selectedPokemonCard");
+const bgMusic = document.getElementById("bgMusic");
+const btnMusicToggle = document.getElementById("btnMusicToggle");
 
 let allPokemonNames = [];
 let currentSeed = null;
 let gameState = "SELECTING"; // 'SELECTING' | 'PLAYING'
 let moveHistory = [];
+let isMusicPlaying = false;
+
+// Initialize Audio Volume
+bgMusic.volume = 0.1; // 10% volume as requested ("no suene tan fuerte")
 
 // Seeded Random Generator (Mulberry32)
 function mulberry32(a) {
@@ -164,5 +170,70 @@ btnCopy.addEventListener('click', () => {
     }
 });
 
-// Start
+/* --- Music Player Logic --- */
+const playlist = [
+    "Audios/Littleroot Town Pokémon Omega Ruby Alpha Sapphire Music Extended HD.mp3",
+    "Audios/furret walk full song 1 hora.mp3",
+    "Audios/Que juego hizo Willyrex REMIX Dalas ft.Delox Christian Relikia.mp3",
+    "Audios/QUÉ JUEGO HIZO WILLYREX 🗣️🗣️ Remix VERSION METAL🤘🏼 Shivita remix willyrex humor music.mp3"
+];
+let currentSongIndex = 0;
+const volumeSlider = document.getElementById("volumeSlider");
+const btnNextSong = document.getElementById("btnNextSong");
+
+// Load initial song without playing yet (autoplay handles play)
+bgMusic.src = playlist[currentSongIndex];
+
+function toggleMusic() {
+    if (bgMusic.paused) {
+        playMusic();
+    } else {
+        pauseMusic();
+    }
+}
+
+function playMusic() {
+    bgMusic.play().then(() => {
+        btnMusicToggle.textContent = "🔊";
+        // Remove direct style manipulation to let CSS handle hover/active via class if needed, or keep simple
+        isMusicPlaying = true;
+    }).catch(error => {
+        console.error("Audio play failed:", error);
+    });
+}
+
+function pauseMusic() {
+    bgMusic.pause();
+    btnMusicToggle.textContent = "🔇";
+    isMusicPlaying = false;
+}
+
+function playNextSong() {
+    currentSongIndex = (currentSongIndex + 1) % playlist.length;
+    bgMusic.src = playlist[currentSongIndex];
+    if (isMusicPlaying) {
+        playMusic();
+    } else {
+        // If it was paused, load next but stay paused? 
+        // Typically "Next" implies "Play Next".
+        playMusic();
+    }
+}
+
+// Controls Events
+btnMusicToggle.addEventListener('click', toggleMusic);
+
+volumeSlider.addEventListener('input', (e) => {
+    bgMusic.volume = e.target.value;
+});
+
+btnNextSong.addEventListener('click', playNextSong);
+
+// Auto-play next song when ended
+bgMusic.addEventListener('ended', playNextSong);
+
+// Initial Autoplay
+playMusic();
+
+// Start Game Data
 fetchPokemonData();
